@@ -1,0 +1,39 @@
+:root {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #141519;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#app{
+  width: 100%;
+}
+
+.text-smaller {
+  font-size: 8px !important;
+  font-weight: 500;
+  line-height: 2.667;
+  letter-spacing: 0.1666666667em !important;
+  font-family: "Roboto", sans-serif;
+  text-transform: uppercase !important;
+}
