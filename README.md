@@ -12,7 +12,7 @@ To get started with this project, follow these steps:
 First, clone the repository to your local machine:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/Chriswolve/unsplash-search
 ```
 
 ### 2. Install dependencies
