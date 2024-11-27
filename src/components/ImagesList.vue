@@ -1,15 +1,20 @@
 <script setup>
-import { computed, defineProps } from 'vue';
+import { ref, computed, defineProps } from 'vue';
 import { useImageStore } from '../store/imageStore';
 import ImageCard from './ImageCard.vue';
 
-defineProps({
+const props = defineProps({
   // Force reload
   onReload: {
     type: Function,
-    required: true
-  }
-});
+    required: true,
+  },
+
+  onScrollingEnds: {
+    type: Function,
+    required: false,
+  },
+})
 
 // Instance of Image store
 const imageStore = useImageStore();
@@ -17,6 +22,25 @@ const imageStore = useImageStore();
 // Computed property to access the images
 const images = computed(() => imageStore.images);
 const errors = computed(() => imageStore.error);
+
+const loading = ref(false)
+
+let k = document.documentElement.scrollHeight - window.scrollY
+
+function handleScroll() {
+  if (window.scrollY + k >= document.documentElement.scrollHeight) {
+    loading.value = true;
+    setTimeout(() => {
+      props.onScrollingEnds()
+      loading.value = false;
+    }, 300)
+
+    console.log('The scrolling ends')
+  }
+}
+
+window.addEventListener('scroll', handleScroll)
+
 </script>
 
 <template>
@@ -25,6 +49,8 @@ const errors = computed(() => imageStore.error);
     <div v-for="(image, index) in images" :key="index">
       <ImageCard :url="image.urls.small" :image="image" />
     </div>
+
+    <div v-if="loading"> loading</div>
   </div>
 
   <div v-else-if="error !== ''">

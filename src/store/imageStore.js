@@ -30,10 +30,14 @@ export const useImageStore = defineStore('image', {
      * Fetches images based on the current search query and stores.
      */
     async fetchImages() {
-      this.images = [];
+      if (!this.images) {
+        this.images = [];
+      }
 
       try {
-        this.images = await API.searchImages(this.query);
+        const newImages = await API.searchImages(this.query);
+
+        this.images = [...this.images, ...newImages]
       } catch (e) {
         this.error = handleErrors(e);
       }
@@ -43,13 +47,19 @@ export const useImageStore = defineStore('image', {
      * Fetches random images and stores them in `images`
      * it uses (saved data ) instead of making a new API call.
      */
-    async fetchRandomImages() {
-      this.images = [];
+    async fetchRandomImages(increase = false) {
+
+      if (!this.images) {
+        this.images = [];
+      }
       try {
-        if (this.trends.length > 0) {
-          this.images = this.trends; // Use stored random images
+        if (this.trends.length > 0 && !increase) {
+          this.images = this.trends // Use stored random images
         } else {
-          this.images = await API.getRandomImages(); // Fetch new random images
+
+          const newImages = await API.getRandomImages();
+          this.images = [...this.images, ...newImages]; // Fetch new random images
+
           console.log('Saving random images...');
           this.trends = this.images; // Save fetched images in trends for future use
         }
