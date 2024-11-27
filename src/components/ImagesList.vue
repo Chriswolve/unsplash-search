@@ -25,21 +25,40 @@ const errors = computed(() => imageStore.error);
 
 const loading = ref(false)
 
-let k = document.documentElement.scrollHeight - window.scrollY
+const documentEle = document.documentElement;
+let k = 0;
 
-function handleScroll() {
-  if (window.scrollY + k >= document.documentElement.scrollHeight) {
+
+function debounce(func, delay) {
+
+    let timeout;
+    return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            func.apply(this, args);
+        }, delay);
+    };
+}
+
+async function checkScrollDown  () {
+  const scrolled = window.innerHeight + window.scrollY;
+  const maxHeight = documentEle.scrollHeight;
+
+  if(scrolled >= (maxHeight + k)) {
     loading.value = true;
-    setTimeout(() => {
-      props.onScrollingEnds()
-      loading.value = false;
-    }, 300)
-
-    console.log('The scrolling ends')
+    k = 100;
+    await debouncedFunc();
   }
 }
 
-window.addEventListener('scroll', handleScroll)
+const debouncedFunc = debounce( async ()=> {
+  await props.onScrollingEnds()
+  loading.value = false;
+  k = 0;
+},2000);
+
+window.addEventListener('scroll', checkScrollDown)
+
 
 </script>
 
@@ -50,7 +69,7 @@ window.addEventListener('scroll', handleScroll)
       <ImageCard :url="image.urls.small" :image="image" />
     </div>
 
-    <div v-if="loading"> loading</div>
+    <div v-if="loading" class="mx-auto"> loading ... </div>
   </div>
 
   <div v-else-if="error !== ''">

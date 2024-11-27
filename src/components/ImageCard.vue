@@ -1,6 +1,6 @@
 <script setup>
 import {  defineProps } from "vue";
-import ImageFooter from './ImageFooter.vue';
+// import ImageFooter from './ImageFooter.vue';
 
 defineProps({
   url: {
@@ -27,11 +27,11 @@ defineProps({
       :src="url"
     ></v-img>
     <!-- Image Footer -->
-    <ImageFooter
+    <!-- <ImageFooter
       :author="image.author"
       :created_at="image.hzCreated"
       :tags="image.tags"
-    />
+    /> -->
 
   </div>
 </template>

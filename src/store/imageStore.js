@@ -19,6 +19,7 @@ export const useImageStore = defineStore('image', {
     // Search query string
     query: '',
     // Error message string
+    page:1,
     error: '',
     // Optimizers
     tags: new HashTable(50), // Tag storage using to reduce callings count
@@ -35,9 +36,12 @@ export const useImageStore = defineStore('image', {
       }
 
       try {
-        const newImages = await API.searchImages(this.query);
+        const newImages = await API.searchImages(this.query,this.page);
 
+        console.log('Saving '+this.query+' images...');
         this.images = [...this.images, ...newImages]
+        this.page ++;
+
       } catch (e) {
         this.error = handleErrors(e);
       }

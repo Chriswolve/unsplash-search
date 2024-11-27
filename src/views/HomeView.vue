@@ -77,7 +77,12 @@ const getMoreImages = async () => {
   if (tag.value === undefined) {
     await imageStore.fetchRandomImages(true)
   }
+  else{
+    await imageStore.fetchImages(tag.value);
+  }
 }
+
+
 
 /* Handles search navigation by redirecting to tag page
 or home based on query state */
@@ -128,7 +133,7 @@ onMounted(async () => {
 
       <div class="text-body-2 font-weight-bold pb-2">{{ title }}</div>
       <!-- Renders the ImageList when loading is complete-->
-      <ImageList v-if="!loading" :onReload="reloadSearching" :onScrollingEnds="getMoreImages" />
+      <ImageList v-show="!loading" :onReload="reloadSearching" :onScrollingEnds="getMoreImages" />
     </v-card-text>
   </v-card>
 </template>

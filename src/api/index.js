@@ -1,6 +1,6 @@
 import { callAPI } from './connector';
 import paths from './paths';
-import { ImageModel } from "../models/ImageModel"
+//import { ImageModel } from "../models/ImageModel"
 
 
 export default {
@@ -20,28 +20,35 @@ export default {
     // Random images
     const images = response.data;
     // Get tags for each image found
-    const imagesWithTags = await Promise.all(
-      images.map(async (image) => {
-        return await ImageModel.create(image)// Factory
-      })
-    );
+    // const imagesWithTags = await Promise.all(
+    //   images.map(async (image) => {
+    //     return await ImageModel.create(image)// Factory
+    //   })
+    // );
 
-    return imagesWithTags;
+    // return imagesWithTags;
+
+    return new Promise((resolve)=> {
+      resolve(images)
+    })
   },
 
   /* Searches for images based on a query and
   enriches them with tags using the ImageModel factory */
-async searchImages(query) {
-  const response = await callAPI(paths.SEARCH_IMAGES, { query });
+async searchImages(query,page) {
+  const response = await callAPI(paths.SEARCH_IMAGES, { query,page });
   const images = response.data.results;
 
-  const imagesWithTags = await Promise.all(
-    images.map(async (image) => {
-      return await ImageModel.create(image); // Factory
-    })
-  );
+  // const imagesWithTags = await Promise.all(
+  //   images.map(async (image) => {
+  //     return await ImageModel.create(image); // Factory
+  //   })
+  // );
 
-  return imagesWithTags;
+  // return imagesWithTags;
+  return new Promise((resolve)=> {
+    resolve(images)
+  })
 }
 
 };
