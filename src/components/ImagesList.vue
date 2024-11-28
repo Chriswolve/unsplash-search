@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, defineProps } from 'vue';
+import { ref, computed, defineProps, watch } from 'vue';
 import { useImageStore } from '../store/imageStore';
 import ImageCard from './ImageCard.vue';
 
@@ -7,14 +7,14 @@ const props = defineProps({
   // Force reload
   onReload: {
     type: Function,
-    required: true,
+    required: true
   },
 
   onScrollingEnds: {
     type: Function,
-    required: false,
-  },
-})
+    required: false
+  }
+});
 
 // Instance of Image store
 const imageStore = useImageStore();
@@ -22,54 +22,38 @@ const imageStore = useImageStore();
 // Computed property to access the images
 const images = computed(() => imageStore.images);
 const errors = computed(() => imageStore.error);
-
-const loading = ref(false)
-
-const documentEle = document.documentElement;
-let k = 0;
+// Oberver
+const sentinelRef = ref(null);
 
 
-function debounce(func, delay) {
-
-    let timeout;
-    return function (...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            func.apply(this, args);
-        }, delay);
-    };
-}
-
-async function checkScrollDown  () {
-  const scrolled = window.innerHeight + window.scrollY;
-  const maxHeight = documentEle.scrollHeight;
-
-  if(scrolled >= (maxHeight + k)) {
-    loading.value = true;
-    k = 100;
-    await debouncedFunc();
+const observerCallback = async (entries) => {
+  const entry = entries[0];
+  if (entry.isIntersecting) {
+    await props.onScrollingEnds();
+    console.log('Load more conntent');
   }
-}
+};
 
-const debouncedFunc = debounce( async ()=> {
-  await props.onScrollingEnds()
-  loading.value = false;
-  k = 0;
-},2000);
-
-window.addEventListener('scroll', checkScrollDown)
-
-
+watch(
+  () => sentinelRef.value,
+  (newValue) => {
+    if (newValue) {
+      const observer = new IntersectionObserver(observerCallback, {
+        root: null,
+        threshold: 1.0
+      });
+      observer.observe(newValue);
+    }
+  }
+);
 </script>
 
 <template>
-
   <div v-if="images.length > 0">
     <div v-for="(image, index) in images" :key="index">
       <ImageCard :url="image.urls.small" :image="image" />
     </div>
-
-    <div v-if="loading" class="mx-auto"> loading ... </div>
+    <div id="sentinel" ref="sentinelRef" class="mx-auto">loading ...</div>
   </div>
 
   <div v-else-if="error !== ''">
